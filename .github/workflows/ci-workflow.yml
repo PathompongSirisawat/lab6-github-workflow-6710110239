@@ -6,9 +6,9 @@ on:
       - main
 
 jobs:
-  build:
+  setup:
+    name: Setup Environment
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3
@@ -18,10 +18,27 @@ jobs:
         with:
           python-version: '3.9'
 
+  test:
+    name: Run Unit Tests
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
       - name: Install pytest
         run: |
           pip install pytest
 
-      - name: Run unit tests
+      - name: Run tests
         run: |
           pytest
+
+  summary:
+    name: CI Summary
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Show summary message
+        run: |
+          echo "CI pipeline completed successfully"
